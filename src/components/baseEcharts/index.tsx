@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as echarts from "echarts/core";
+import { ECOption } from "./config";
 
 type Props = {
-  options: any; // 应该直接用ECOption就可以
+  options: ECOption; // 应该直接用ECOption就可以
 };
 
 const BaseEcharts: React.FC<Props> = (props) => {

@@ -16,6 +16,13 @@ const BaseBarChart: React.FC = () => {
     []
   );
 
+  // useEffect(() => {
+  //   fetch("../../api/data.json")
+  //     .then((response) => console.log(response))
+  //     // .then((jsonData) => console.log(jsonData))
+  //     .catch((error) => console.error("Error fetching data:", error));
+  // }, []);
+
   // 基础柱状图
   const barOption1: ECOption = useMemo(
     () => ({
@@ -250,7 +257,7 @@ const BaseBarChart: React.FC = () => {
   const [dataSource3, setDataSource3] = useState<number[]>(initRandom);
 
   // 动态排序图
-  const barOption4 = useMemo(
+  const barOption4: ECOption = useMemo(
     () => ({
       xAxis: {
         max: "dataMax",
@@ -305,7 +312,7 @@ const BaseBarChart: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const scatterOption = useMemo(
+  const scatterOption: ECOption = useMemo(
     () => ({
       dataset: {
         // 提供一份数据。
