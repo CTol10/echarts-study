@@ -1,34 +1,42 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import BaseEcharts from "../../components/baseEcharts";
 import { ECOption } from "../../components/baseEcharts/config";
 
 const BaseBarChart: React.FC = () => {
   // const navigate = useNavigate();
-  const dataSource1 = useMemo(
-    () => [
-      ["product", "2015", "2016", "2017"],
-      ["Matcha Latte", 43.3, 85.8, 93.7],
-      ["Milk Tea", 83.1, 73.4, 55.1],
-      ["Cheese Cocoa", 86.4, 65.2, 82.5],
-      ["Walnut Brownie", 72.4, 53.9, 39.1],
-    ],
-    []
-  );
+  const [data1, setData1] = useState([]);
+  const [data2, setData2] = useState([]);
+  const chartLoading = useRef(true);
+  // const dataSource1 = useMemo(
+  //   () => [
+  //     ["product", "2015", "2016", "2017"],
+  //     ["Matcha Latte", 43.3, 85.8, 93.7],
+  //     ["Milk Tea", 83.1, 73.4, 55.1],
+  //     ["Cheese Cocoa", 86.4, 65.2, 82.5],
+  //     ["Walnut Brownie", 72.4, 53.9, 39.1],
+  //   ],
+  //   []
+  // );
 
-  // useEffect(() => {
-  //   fetch("../../api/data.json")
-  //     .then((response) => console.log(response))
-  //     // .then((jsonData) => console.log(jsonData))
-  //     .catch((error) => console.error("Error fetching data:", error));
-  // }, []);
+  useEffect(() => {
+    chartLoading.current = true;
+    fetch("/api/data.json")
+      .then((response) => response.json())
+      .then((jsonData) => {
+        setData1(jsonData.dataSource1);
+        setData2(jsonData.dataSource2);
+        chartLoading.current = false;
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   // 基础柱状图
   const barOption1: ECOption = useMemo(
     () => ({
       dataset: {
         // 提供一份数据。
-        source: dataSource1,
+        source: data1,
       },
       legend: {
         // orient: "vertical",
@@ -68,27 +76,27 @@ const BaseBarChart: React.FC = () => {
         },
       ],
     }),
-    [dataSource1]
+    [data1]
   );
 
-  const dataSource2 = useMemo(
-    () => [
-      // seriesLayout数据
-      ["weekday", "Mon", "Tue", "Wed", "Thu", "Fri"],
-      ["zz", 23, 14, 55, 77, 99],
-      ["xx", 24, 88, 42, 54, 75],
-      ["cc", 32, 90, 43, 87, 21],
-      ["vv", 51, 24, 88, 42, 54],
-      ["bb", 77, 14, 55, 77, 99],
-    ],
-    []
-  );
+  // const dataSource2 = useMemo(
+  //   () => [
+  //     // seriesLayout数据
+  //     ["weekday", "Mon", "Tue", "Wed", "Thu", "Fri"],
+  //     ["zz", 23, 14, 55, 77, 99],
+  //     ["xx", 24, 88, 42, 54, 75],
+  //     ["cc", 32, 90, 43, 87, 21],
+  //     ["vv", 51, 24, 88, 42, 54],
+  //     ["bb", 77, 14, 55, 77, 99],
+  //   ],
+  //   []
+  // );
 
   // 基础柱状图数据集写法
   const barOption2: ECOption = useMemo(
     () => ({
       dataset: {
-        source: dataSource2,
+        source: data2,
       },
       legend: {},
       xAxis: { type: "category" },
@@ -170,14 +178,14 @@ const BaseBarChart: React.FC = () => {
         },
       ],
     }),
-    [dataSource2]
+    [data2]
   );
 
   // 堆叠柱状图
   const barOption3: ECOption = useMemo(
     () => ({
       dataset: {
-        source: dataSource2,
+        source: data2,
       },
       legend: {},
       xAxis: { type: "category" },
@@ -243,7 +251,7 @@ const BaseBarChart: React.FC = () => {
         },
       ],
     }),
-    [dataSource2]
+    [data2]
   );
   const initRandomArray = (index: number) => {
     let randomArray: number[] = [];
@@ -316,7 +324,7 @@ const BaseBarChart: React.FC = () => {
     () => ({
       dataset: {
         // 提供一份数据。
-        source: dataSource1,
+        source: data1,
       },
       legend: {},
       tooltip: {
@@ -330,7 +338,7 @@ const BaseBarChart: React.FC = () => {
         { type: "scatter", seriesLayoutBy: "row" },
       ],
     }),
-    [dataSource1]
+    [data1]
   );
 
   return (
@@ -344,13 +352,13 @@ const BaseBarChart: React.FC = () => {
     >
       <h2>基础柱状图</h2>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        <BaseEcharts options={barOption1} />
-        <BaseEcharts options={barOption2} />
+        <BaseEcharts options={barOption1} isLoading={chartLoading.current} />
+        <BaseEcharts options={barOption2} isLoading={chartLoading.current} />
       </div>
       <h2>堆叠柱状图</h2>
       <b style={{ color: "red" }}>表现数据之和的变化</b>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        <BaseEcharts options={barOption3} />
+        <BaseEcharts options={barOption3} isLoading={chartLoading.current} />
       </div>
       <h2>动态排序柱状图</h2>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
